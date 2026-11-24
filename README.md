@@ -55,7 +55,7 @@ python scripts/run_level2.py --stereo hybrid      # learned + classical matcher 
 python scripts/run_level2.py --auto               # height features from detection masks (one click per feature)
 pytest                                            # 86 unit tests
 ruff check src scripts tests && ruff format --check src scripts tests
-pyright                                           # type check (CI runs all of these)
+pyright                                           # type check
 ```
 
 Features are located by hand in `data/annotations/rois.yaml` (view frames with `scripts/annotate_view.py`).
