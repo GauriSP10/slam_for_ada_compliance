@@ -1,0 +1,169 @@
+# ADA thresholds, in INCHES.
+#
+# Basis: 2010 ADA Standards for Accessible Design (the legal text); the ADA Checklist for
+# Existing Facilities (Institute for Human Centered Design, proposal ref [1]) is built on it.
+# Massachusetts 521 CMR is a separate law and can differ; it is NOT modelled here.
+#
+# Fields
+#   id               unique
+#   kind             FeatureKind value (see datatypes.py)
+#   applies_to       ground-truth ids this rule is scored against. Needed because one kind
+#                    (e.g. surface_height) can fall under different rules, or none.
+#   min_in / max_in  limits, inches
+#   borderline_sigmas  within this many sigma of a limit => BORDERLINE verdict
+#   citation         ADA 2010 section
+#   verification     how well the number is checked (see below)
+#   note             caveats that change how the verdict should be read
+#
+# verification levels
+#   standard_verbatim       exact wording seen. All ten rules reached this level by reading 36 CFR 1191
+#                           Appendix D (Access Board guidelines, whose technical text the 2010 Standards
+#                           reproduce) on law.cornell.edu, agreeing with an independent fetch of the
+#                           2010 Standards page. Cite the 2010 Standards section numbers in the report.
+#                           (Where a quote said the measurement is to a character BASELINE, that part was
+#                           paraphrased by the fetch, not quoted.)
+#   guide_verbatim          exact wording of an Access Board guide page seen (guidance, not the regulation)
+#   secondary_sources       agrees across the Access Board guide and Massachusetts 521 CMR, but the
+#                           ADA 2010 sentence itself was not retrieved verbatim
+#   single_source_unchecked quoted by one fetch of the archive.ada.gov page and not independently
+#                           confirmed. SPOT-CHECK against the official text before the report.
+#
+# Applicability: the 2010 Standards apply to construction/alterations that began on or after
+# 2012-03-15 (28 CFR 35.151(c)(3), 36.406(a)). ISEC construction began 2014-02-21 (per the team),
+# so the 2010 Standards apply to the whole building. Cite the source of that date in the report.
+#
+# Features with NO rule here (accuracy is scored, pass/fail is not):
+#   kitchen_microwave_height  no height rule for a microwave as such
+#   plug_point_height         the 2010 text has no dedicated outlet-height rule; reach limits
+#                             apply only to operable parts, and dedicated-use receptacles are exempt (205.1)
+#   dustbin_height            no rule
+#   hallway_length_a, hallway_length_overlook   no rule
+
+rules:
+  # ------------------------------------------------------------------ doors
+  - id: door_clear_width
+    kind: door_width
+    applies_to: [door_entrance_width, door_interior_width, door_bathroom_width]
+    min_in: 32
+    borderline_sigmas: 2.0
+    citation: "ADA 2010 404.2.3"
+    verification: standard_verbatim   # Figure 404.2.3 caption: "clear opening width 32 inches (815 mm) minimum"; also guide + 521 CMR 26.5
+    note: >
+      CLEAR width is measured from the stop to the face of the door open 90 degrees, and nothing
+      may project into it below 34 in. The tape values in ground_truth.yaml (35, 35.6, 37) are
+      most likely the full opening, which is LARGER than clear width (521 CMR notes a 36 in door
+      gives about 32 in clear). DECISION: the tape values are full opening width (confirmed by
+      the team), and we measure opening width too, so error is scored like for like. The verdict
+      compares opening width to the 32 in clear-width limit as a screening check; say so plainly
+      in the report, because clear width is smaller than opening width. Openings more than 24 in
+      deep need 36 in clear (404.2.3), which does not apply to ordinary door leaves.
+
+  # ------------------------------------------------------------------ hallways
+  - id: hallway_clear_width
+    kind: hallway_width
+    applies_to: [hallway_width_prof_offices, hallway_width_bathroom]
+    min_in: 36
+    borderline_sigmas: 2.0
+    citation: "ADA 2010 403.5.1"
+    verification: standard_verbatim   # "the clear width of walking surfaces shall be 36 inches (915 mm) minimum"
+    note: >
+      Width may drop to 32 in for at most 24 in of length (e.g. at doorways). Where the width is
+      under 60 in, passing spaces are needed at 200 ft intervals (403.5.3); our 70 in hallways
+      are above that.
+
+  # ------------------------------------------------------------------ hardware and reach
+  - id: door_hardware_height
+    kind: hardware_height
+    applies_to: [door_hardware_entrance, door_hardware_wooden]
+    min_in: 34
+    max_in: 48
+    borderline_sigmas: 2.0
+    citation: "ADA 2010 404.2.7"
+    verification: standard_verbatim   # "34 inches (865 mm) minimum and 48 inches (1220 mm) maximum"
+    note: "Measured to the operable part of the hardware, above the finish floor."
+
+  - id: operable_part_reach
+    kind: operable_height
+    applies_to: [thermostat_height, card_reader_height]
+    min_in: 15
+    max_in: 48
+    borderline_sigmas: 2.0
+    citation: "ADA 2010 308.2.1 / 308.3.1, 309.3"
+    verification: standard_verbatim   # 308.2.1: "high forward reach shall be 48 inches (1220 mm) maximum", "low forward reach shall be 15 inches (380 mm) minimum"
+    note: >
+      Unobstructed reach only. Over an obstruction the high limit drops (44 in forward, 46 in side
+      for deeper reaches), so a unit behind a counter or table would need a lower limit.
+      Expected result on this floor: thermostat (51.25 in) FAILS; card reader (47 in) passes with little margin.
+
+  # ------------------------------------------------------------------ handrail, signs, fountain
+  - id: handrail_height
+    kind: handrail_height
+    applies_to: [handrail_height]
+    min_in: 34
+    max_in: 38
+    borderline_sigmas: 2.0
+    citation: "ADA 2010 505.4"
+    verification: standard_verbatim   # "34 inches (865 mm) minimum and 38 inches (965 mm) maximum"
+    note: "Top of the gripping surface above the walking surface."
+
+  - id: tactile_sign_height
+    kind: signage_height
+    applies_to: [signage_height, signage_electrical_room]
+    min_in: 48
+    max_in: 60
+    borderline_sigmas: 2.0
+    citation: "ADA 2010 703.4.1"
+    verification: standard_verbatim   # "48 inches (1220 mm) minimum above the finish floor", "60 inches (1525 mm) maximum above the finish floor or ground surface"; exception: elevator car controls
+    note: >
+      Applies to signs with TACTILE characters, and the limits are measured to the BASELINE of the
+      lowest and highest tactile characters, not to the sign's centre or top. CONFIRMED by the
+      team: the tape measurement for signage_electrical_room (61.5) was to the baseline of the
+      highest tactile character, so its FAIL against 60 in is meaningful. Our vision measurement
+      must be to the same baseline, not the sign's top or centre.
+
+  - id: fountain_spout_height
+    kind: fountain_height
+    applies_to: [water_fountain_height]
+    max_in: 36
+    borderline_sigmas: 2.0
+    citation: "ADA 2010 602.4"
+    verification: standard_verbatim   # "Spout outlets shall be 36 inches (915 mm) maximum above the finish floor or ground"
+    note: "Spout OUTLET height. Confirm the tape measurement was to the spout, not the unit top."
+
+  # ------------------------------------------------------------------ protrusion
+  - id: protruding_object
+    kind: protrusion
+    applies_to: [water_fountain_protrusion]
+    max_in: 4
+    borderline_sigmas: 2.0
+    citation: "ADA 2010 307.2 (drinking fountains: 602.1 requires 307)"
+    verification: standard_verbatim   # 307.2: "Objects with leading edges more than 27 inches (685 mm) and not more than 80 inches (2030 mm)" ... "shall protrude 4 inches (100 mm) maximum horizontally into the circulation path"; handrails 4 1/2 in
+    note: >
+      Only objects whose LEADING EDGE is more than 27 in and not more than 80 in above the floor are limited to 4 in
+      (handrails 4.5 in). The fountain protrudes 18.4 in. CONFIRMED by the team: its lowest front
+      edge is above 27 in, so it is not cane-detectable and the 4 in limit applies. This is a real FAIL.
+
+  # ------------------------------------------------------------------ tables, counters
+  - id: work_surface_height
+    kind: surface_height
+    applies_to: [table_round_height, table_wood_height, kitchen_white_table_height]
+    min_in: 28
+    max_in: 34
+    borderline_sigmas: 2.0
+    citation: "ADA 2010 902.3"
+    verification: standard_verbatim   # "28 inches (710 mm) minimum and 34 inches (865 mm) maximum"
+    note: >
+      902.3 applies to dining and work surfaces that must be accessible. 226.1 requires only 5 percent
+      of such seating to comply, so a 42 in bar-height table is NOT a violation by itself if accessible
+      tables are also provided. table_round_height (28.8) is the only one expected to pass; the 42 and
+      42.5 in tables will read FAIL here but that is not necessarily non-compliance. DECISION: score
+      pass/fail for all three anyway, and put this caveat next to the two tall tables in the report.
+
+  - id: sink_counter_height
+    kind: surface_height
+    applies_to: [kitchen_counter_sink_height]
+    max_in: 34
+    borderline_sigmas: 2.0
+    citation: "ADA 2010 606.3"
+    verification: standard_verbatim   # "34 inches (865 mm) maximum above the finish floor or ground" to the higher of rim or counter surface
+    note: "Measured at the higher of the rim or counter surface. Tape value is exactly 34 in, so expect BORDERLINE."

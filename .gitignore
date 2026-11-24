@@ -1,0 +1,22 @@
+# Environment / IDE
+.venv/
+.idea/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Large or regenerable data: NEVER commit (bags are ~43 GB)
+data/raw/
+data/cache/*
+!data/cache/.gitkeep
+outputs/*
+!outputs/.gitkeep
+
+data/models/
+
+# Personal or third-party material kept off the public repo
+data/ground_truth/photos/
+docs/*.pdf
+
+# Build artefacts
+*.egg-info/

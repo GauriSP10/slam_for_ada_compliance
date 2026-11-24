@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slam_for_ada"
+version = "0.1.0"
+description = "ADA compliance measurement from a calibrated 5-camera rig (EECE5554 Level 2)"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+    "opencv-python",
+    "pyyaml",
+    "rosbags",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+# Tier 2 (GPU). torch needs a CUDA build: uv pip install torch --index-url https://download.pytorch.org/whl/cu128
+ml = ["torch", "transformers", "onnxruntime-gpu==1.22.0", "ultralytics"]
+dev = ["pytest", "ruff", "pyright"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 140
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = [
+    "UP042",  # keep (str, Enum): StrEnum changes str() of the members, which the YAML round trip relies on
+    "B905",   # zip() lengths are equal by construction throughout
+]
+
+[tool.pyright]
+include = ["src", "scripts"]
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "basic"
+reportMissingModuleSource = false

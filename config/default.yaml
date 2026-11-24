@@ -1,0 +1,52 @@
+# Pipeline settings. Every tunable number lives here, not in code.
+# Each section maps to a dataclass in src/slam_for_ada/config.py; missing keys fall back to its defaults.
+
+paths:
+  bags: data/raw/bags
+  calibration: data/calibration
+  ground_truth: data/ground_truth/ground_truth.yaml
+  annotations: data/annotations/rois.yaml
+  rules: config/ada_rules.yaml
+  cache: data/cache
+  models: data/models
+  outputs: outputs
+
+cache:
+  keyframe_window: 10          # sharpest set out of every 10 consecutive sets (20 Hz -> 2 Hz)
+  max_sync_spread_ms: 5.0
+  png_compress: 1
+  sharpness_scale: 0.5
+  min_sharpness_ratio: 0.6     # blurred if below this fraction of the bag's median sharpness
+  max_person_fraction: 0.10
+  person_conf: 0.35
+  person_model: yolov8n.pt
+
+stereo:
+  right_cams: [1, 2, 3, 4]     # pairs (0,k): baselines about 0.164 / 0.329 / 0.49 / 0.656 m
+  num_disparities: 256
+  block_size: 5
+  uniqueness_ratio: 10
+  speckle_window: 100
+  speckle_range: 2
+  disp12_max_diff: 1
+  sigma_disparity_px: 0.3
+  min_depth_m: 0.4
+  max_depth_m: 20.0
+  fuse_outlier_sigmas: 3.0
+
+floor:
+  ransac_iters: 500
+  inlier_thresh_m: 0.03
+  v_min_frac: 0.55
+  depth_min_m: 1.0
+  depth_max_m: 7.0
+  max_tilt_deg: 12.0
+  seed: 0
+
+measure:
+  jamb_snap_px: 18
+  min_door_width_in: 20.0
+  max_door_width_in: 60.0
+  min_cos_incidence: 0.3      # reject ray-plane intersections at grazing incidence (ill-conditioned)
+  stereo_edge_bias_frac: 0.10 # systematic error of a stereo read at a depth edge, share of width (calibrated on 2 doors only)
+  sample_rows: 40

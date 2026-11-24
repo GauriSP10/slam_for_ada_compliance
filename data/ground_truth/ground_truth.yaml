@@ -1,0 +1,218 @@
+# Tape-measure ground truth, ISEC 4th floor.  UNITS: INCHES.
+# Source: four handwritten cards, IMG_3488 .. IMG_3491 (the photos are kept local, not in the repo).
+# Transcribed from the photos; every value has been confirmed by the team.
+#
+# Fields
+#   id          unique, snake_case; Measurement.feature_id refers to this
+#   kind        one of FeatureKind in src/slam_for_ada/datatypes.py (the enum value strings)
+#   value_in    tape-measured value, inches, exactly as written on the card
+#   confirmed   false = the reading of the handwriting is uncertain; team must confirm
+#   photo       which card it came from
+#   bags        which bag(s) the feature is visible in. Left empty until the frame
+#               index has been built.  Empty means "not yet checked", NOT "invisible".
+#   note        anything a reader should know
+#
+# Items on the checklist card (IMG_3489) with NO value written, so no entry here:
+#   elevator dimensions, elevator button height, turning space, protruding items (other than
+#   the water fountain), tables/chairs/bins/card readers other than those listed below.
+#
+# Kinds with no ADA rule in this project (error is still scored, pass/fail is not):
+#   object_height, hallway_length.
+#
+# Measurement bases confirmed by the team:
+#   door widths        = full OPENING (frame to frame), NOT ADA clear width (which is smaller)
+#   signage_electrical_room = baseline of the highest tactile character (the basis the ADA 60 in limit uses)
+#   water fountain lowest front edge is above 27 in, so the 4 in protrusion limit applies
+
+features:
+  # ---------------------------------------------------------------- doors
+  - id: door_entrance_width
+    kind: door_width
+    value_in: 35
+    confirmed: true
+    photo: IMG_3488
+    bags: ["2023-03-14-12-13-30_32"]
+    note: "Card says 'Door length' (meaning width). Last digit was overwritten; team confirmed 35 (not 34.5). Measured as the full opening (frame to frame), not clear width."
+
+  - id: door_interior_width
+    kind: door_width
+    value_in: 35.6
+    confirmed: true
+    photo: IMG_3490
+    bags: ["2023-03-14-12-13-30_32", "2023-03-14-12-14-02_33"]
+    note: "Struck-out 36, corrected to 35.6. A stray mark under it looks like '3C' and is treated as an artefact. Measured as the full opening (frame to frame), not clear width."
+
+  - id: door_bathroom_width
+    kind: door_width
+    value_in: 37
+    confirmed: true
+    photo: IMG_3490
+    bags: []
+    note: "Measured as the full opening (frame to frame), not clear width."
+
+  # ---------------------------------------------------------------- hallways
+  - id: hallway_width_prof_offices
+    kind: hallway_width
+    value_in: 70
+    confirmed: true
+    photo: IMG_3490
+    bags: []
+    note: "Hallway width by the professors' offices."
+
+  - id: hallway_width_bathroom
+    kind: hallway_width
+    value_in: 70
+    confirmed: true
+    photo: IMG_3490
+    bags: ["2023-03-14-12-13-30_32"]
+    note: "Hallway width by the bathroom."
+
+  - id: hallway_length_a
+    kind: hallway_length
+    value_in: 71
+    confirmed: true
+    photo: IMG_3491
+    bags: []
+    note: "Card says 'hallway length 71\"'. Team confirmed 71 inches. Short for a hallway (about 6 ft), so likely a segment. Not ADA-scored."
+
+  - id: hallway_length_overlook
+    kind: hallway_length
+    value_in: 69
+    confirmed: true
+    photo: IMG_3491
+    bags: []
+    note: "Card says 'hallway length overlook 69\"'. Team confirmed 69 inches. Same caveat as hallway_length_a. Not ADA-scored."
+
+  # ---------------------------------------------------------------- hardware / operable parts
+  - id: door_hardware_entrance
+    kind: hardware_height
+    value_in: 41.5
+    confirmed: true
+    photo: IMG_3488
+    bags: ["2023-03-14-12-13-30_32"]
+    note: "Card says 'Handle height'."
+
+  - id: door_hardware_wooden
+    kind: hardware_height
+    value_in: 39.5
+    confirmed: true
+    photo: IMG_3490
+    bags: ["2023-03-14-12-13-30_32", "2023-03-14-12-14-02_33", "2023-03-14-12-14-34_34"]
+    note: "Card says 'Door hardware (wooden)'."
+
+  - id: card_reader_height
+    kind: operable_height
+    value_in: 47
+    confirmed: true
+    photo: IMG_3491
+    bags: ["2023-03-14-12-14-02_33"]
+    note: ""
+
+  - id: thermostat_height
+    kind: operable_height
+    value_in: 51.25
+    confirmed: true
+    photo: IMG_3488
+    bags: ["2023-03-14-12-13-30_32"]
+    note: "Listed under 'Accessibility' on the card."
+
+  # ---------------------------------------------------------------- handrail
+  - id: handrail_height
+    kind: handrail_height
+    value_in: 35.5
+    confirmed: true
+    photo: IMG_3488
+    bags: ["2023-03-14-12-14-34_34"]
+    note: "Struck-out 36, corrected to 35.5."
+
+  # ---------------------------------------------------------------- signage
+  - id: signage_height
+    kind: signage_height
+    value_in: 55
+    confirmed: true
+    photo: IMG_3490
+    bags: []
+    note: "Card says 'signage height' (first word struck out and rewritten)."
+
+  - id: signage_electrical_room
+    kind: signage_height
+    value_in: 61.5
+    confirmed: true
+    photo: IMG_3491
+    bags: []
+    note: "Card says 'electrical room signage'. Value was hard to read; team confirmed 61.5. Measured to the baseline of the highest tactile character, so the 60 in ADA limit applies directly."
+
+  # ---------------------------------------------------------------- water fountain
+  - id: water_fountain_height
+    kind: fountain_height
+    value_in: 31.5
+    confirmed: true
+    photo: IMG_3490
+    bags: []
+    note: ""
+
+  - id: water_fountain_protrusion
+    kind: protrusion
+    value_in: 18.4
+    confirmed: true
+    photo: IMG_3490
+    bags: []
+    note: "How far the fountain sticks out from the wall. Team confirmed its lowest front edge is above 27 in, so the 4 in protrusion limit applies."
+
+  # ---------------------------------------------------------------- kitchen
+  - id: kitchen_white_table_height
+    kind: surface_height
+    value_in: 42.5
+    confirmed: true
+    photo: IMG_3490
+    bags: []
+    note: ""
+
+  - id: kitchen_counter_sink_height
+    kind: surface_height
+    value_in: 34
+    confirmed: true
+    photo: IMG_3490
+    bags: []
+    note: "Card says 'counter/sink'."
+
+  - id: kitchen_microwave_height
+    kind: surface_height
+    value_in: 33
+    confirmed: true
+    photo: IMG_3490
+    bags: []
+    note: ""
+
+  - id: table_round_height
+    kind: surface_height
+    value_in: 28.8
+    confirmed: true
+    photo: IMG_3490
+    bags: []
+    note: "Card line reads 'Table round ... height 28.8'. Team confirmed 28.8."
+
+  - id: table_wood_height
+    kind: surface_height
+    value_in: 42
+    confirmed: true
+    photo: IMG_3490
+    bags: []
+    note: "Card says 'Table wood high'."
+
+  - id: plug_point_height
+    kind: outlet_height
+    value_in: 19.3
+    confirmed: true
+    photo: IMG_3490
+    bags: ["2023-03-14-12-13-30_32"]
+    note: "Card says '(top of) plugpoint height'. Measured to the TOP of the plate."
+
+  # ---------------------------------------------------------------- other objects
+  - id: dustbin_height
+    kind: object_height
+    value_in: 35.6
+    confirmed: true
+    photo: IMG_3488
+    bags: []
+    note: "Struck-out 36, corrected to 35.6. Team confirmed. No ADA rule; accuracy only."

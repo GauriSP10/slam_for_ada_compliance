@@ -1,0 +1,178 @@
+# Where each ground-truth feature appears, as pixels on the cam0 UNDISTORTED image (the same grid as every depth map).
+# Read off with scripts/annotate_view.py. Placements need only be rough: jamb lines snap to the nearest vertical edge.
+#
+# Fields common to every entry
+#   id          unique observation id
+#   feature_id  ground-truth id (data/ground_truth/ground_truth.yaml)
+#   kind        FeatureKind value
+#   bag         bag file name suffix (e.g. "32" -> 2023-03-14-12-13-30_32)
+#   key         keyframe number inside that bag (data/cache/frames/<bag>/index.json)
+#   note        what exactly the pixels mark
+#
+# Geometry by kind
+#   door_width      left_jamb / right_jamb: [[x_top, y_top], [x_bottom, y_bottom]];  wall_rois: boxes on the door leaf [x0,y0,x1,y1]
+#   *_height        point_px: [x, y] the point whose height is measured;  depth_roi: box on the same surface used for range
+#   hallway_width   left_wall_roi / right_wall_roi: boxes on the walls;  floor_contacts: {left: [[x,y],...], right: [[x,y],...]}
+#   protrusion      wall_roi: box on the wall beside the object;  object_roi: box on the front of the object
+#
+# Measurement bases assumed (see ground_truth.yaml): door width = full opening, frame to frame;
+# hardware = centre of the handle; operable parts = centre of the device; outlet = TOP of the plate; handrail = top of the rail.
+
+annotations:
+  # ----------------------------------------------------------------- teal entrance door, thermostat, outlet (bag 32, key 4)
+  - id: door_entrance_width__32_4
+    feature_id: door_entrance_width
+    kind: door_width
+    bag: "32"
+    key: 4
+    left_jamb: [[160, 20], [160, 520]]
+    right_jamb: [[399, 20], [399, 520]]
+    wall_rois: [[190, 40, 390, 330], [190, 395, 390, 520]]
+    note: "teal door leaf edges; the leaf fills the frame"
+
+  - id: door_hardware_entrance__32_4
+    feature_id: door_hardware_entrance
+    kind: hardware_height
+    bag: "32"
+    key: 4
+    point_px: [275, 364]
+    depth_roi: [358, 335, 394, 395]
+    note: "centre of the horizontal pull bar; range from the matte leaf just right of the bar (the shiny bar itself mismatches in stereo)"
+
+  - id: thermostat_height__32_4
+    feature_id: thermostat_height
+    kind: operable_height
+    bag: "32"
+    key: 4
+    point_px: [478, 246]
+    depth_roi: [472, 233, 486, 260]
+    note: "centre of the thermostat on the white wall right of the teal door"
+
+  - id: plug_point_height__32_4
+    feature_id: plug_point_height
+    kind: outlet_height
+    bag: "32"
+    key: 4
+    point_px: [475, 487]
+    depth_roi: [471, 490, 479, 512]
+    note: "TOP edge of the outlet plate low on the white wall"
+
+  # ----------------------------------------------------------------- wooden office door (bag 32, key 60)
+  - id: door_interior_width__32_60
+    feature_id: door_interior_width
+    kind: door_width
+    bag: "32"
+    key: 60
+    left_jamb: [[593, 20], [591, 500]]
+    right_jamb: [[672, 20], [674, 500]]
+    wall_rois: [[603, 60, 662, 280], [603, 370, 662, 500]]
+    note: "wooden leaf edges, seen obliquely from the corridor"
+
+  - id: door_hardware_wooden__32_60
+    feature_id: door_hardware_wooden
+    kind: hardware_height
+    bag: "32"
+    key: 60
+    point_px: [590, 346]
+    depth_roi: [598, 375, 626, 445]
+    note: "lever handle centre; range from clean leaf just below the lock (the lock body itself protrudes and scatters depth)"
+
+  # ----------------------------------------------------------------- wooden door lever + card reader (bag 33, key 18)
+  - id: door_hardware_wooden__33_18
+    feature_id: door_hardware_wooden
+    kind: hardware_height
+    bag: "33"
+    key: 18
+    point_px: [643, 345]
+    depth_roi: [662, 310, 700, 380]
+    note: "lever handle on the right-hand door"
+
+  - id: card_reader_height__33_18
+    feature_id: card_reader_height
+    kind: operable_height
+    bag: "33"
+    key: 18
+    point_px: [148, 326]
+    depth_roi: [136, 308, 160, 344]
+    note: "red-lit card reader at the left door"
+
+  # ----------------------------------------------------------------- two more wooden doors (bag 33, key 12)
+  - id: door_interior_width__33_12a
+    feature_id: door_interior_width
+    kind: door_width
+    bag: "33"
+    key: 12
+    left_jamb: [[614, 20], [615, 500]]
+    right_jamb: [[698, 20], [699, 500]]
+    wall_rois: [[626, 60, 690, 320], [626, 365, 690, 500]]
+    note: "right-most wooden leaf, seen obliquely and close"
+
+  - id: door_hardware_wooden__33_12a
+    feature_id: door_hardware_wooden
+    kind: hardware_height
+    bag: "33"
+    key: 12
+    point_px: [682, 341]
+    depth_roi: [655, 375, 692, 460]
+    note: "lever of the right-most door; range from leaf below it"
+
+  - id: door_interior_width__33_12b
+    feature_id: door_interior_width
+    kind: door_width
+    bag: "33"
+    key: 12
+    left_jamb: [[506, 20], [507, 500]]
+    right_jamb: [[568, 20], [568, 500]]
+    wall_rois: [[516, 40, 560, 270], [516, 335, 560, 450]]
+    note: "middle wooden leaf, seen very obliquely"
+
+  - id: door_hardware_wooden__33_12b
+    feature_id: door_hardware_wooden
+    kind: hardware_height
+    bag: "33"
+    key: 12
+    point_px: [507, 312]
+    depth_roi: [518, 335, 560, 440]
+    note: "lever of the middle door; range from the leaf below it"
+
+  # ----------------------------------------------------------------- handrail + lever (bag 34, key 40)
+  - id: handrail_height__34_40
+    feature_id: handrail_height
+    kind: handrail_height
+    bag: "34"
+    key: 40
+    point_px: [500, 343]
+    depth_roi: [494, 339, 506, 348]
+    note: "top of the metal handrail further along the balustrade"
+
+  - id: door_hardware_wooden__34_40
+    feature_id: door_hardware_wooden
+    kind: hardware_height
+    bag: "34"
+    key: 40
+    point_px: [65, 362]
+    depth_roi: [8, 385, 48, 460]
+    note: "lever on the wooden door at the left edge; range from the leaf below it"
+
+  # ----------------------------------------------------------------- atrium handrail (bag 34, key 12)
+  - id: handrail_height__34_12
+    feature_id: handrail_height
+    kind: handrail_height
+    bag: "34"
+    key: 12
+    point_px: [600, 381]
+    depth_roi: [592, 376, 608, 388]
+    note: "top of the metal handrail on the glass balustrade"
+
+  # ----------------------------------------------------------------- hallway (bag 32, key 18)
+  - id: hallway_width_bathroom__32_18
+    feature_id: hallway_width_bathroom
+    kind: hallway_width
+    bag: "32"
+    key: 18
+    left_wall_roi: [20, 120, 140, 500]
+    right_wall_roi: [510, 120, 650, 430]
+    floor_contacts:
+      left: [[207, 532], [222, 430], [232, 350]]
+      right: [[597, 520], [495, 440], [390, 380]]
+    note: "white wall left, yellow wall right, near the white door with the lever"

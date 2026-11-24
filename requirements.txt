@@ -1,0 +1,12 @@
+# Python 3.12 (OpenCV and the ML wheels are not reliable on 3.14)
+numpy==2.5.5
+opencv-python==5.1.0.95
+matplotlib==3.11.2
+pyyaml==6.0.4
+rosbags==0.11.10
+ultralytics==8.4.218   # YOLOv8-nano person detector
+# Tier 2 (GPU): torch 2.11 CUDA 12.8 build via `uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128`
+torch==2.11.0
+transformers==5.24.0   # OWLv2 + SAM + Depth Anything, loaded from safetensors only
+onnxruntime-gpu==1.22.0  # learned stereo; 1.22 matches CUDA 12 (newer builds want CUDA 13)
+pytest==9.2.0
