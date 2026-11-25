@@ -100,3 +100,63 @@ def test_decision_counts():
     assert summary.n == 3
     assert summary.n_decisions == 2
     assert summary.n_correct == 1
+
+def test_group_by_camera_pair():
+    """A fused result should be attributed to each contributing pair."""
+    from slam_for_ada.eval.ablation import group_by_camera_pair
+
+    def pair(left, right):
+        return SimpleNamespace(left=left, right=right)
+
+    result1 = make_result("stereo_depth", "door_1", 2.0)
+    result1.estimate.observations = [
+        SimpleNamespace(pairs=(pair(0, 1), pair(0, 2)))
+    ]
+
+    result2 = make_result("stereo_depth", "door_2", -3.0)
+    result2.estimate.observations = [
+        SimpleNamespace(pairs=(pair(0, 2),))
+    ]
+
+    groups = group_by_camera_pair([result1, result2])
+
+    assert len(groups["cam0-cam1"]) == 1
+    assert len(groups["cam0-cam2"]) == 2
+
+
+def test_compare_camera_pairs():
+    """Verify MAE and decision accuracy for contributing pairs."""
+    from slam_for_ada.eval.ablation import compare_camera_pairs
+
+    def pair(left, right):
+        return SimpleNamespace(left=left, right=right)
+
+    result1 = make_result("stereo_depth", "door_1", 2.0, True)
+    result1.estimate.observations = [
+        SimpleNamespace(pairs=(pair(0, 1), pair(0, 2)))
+    ]
+
+    result2 = make_result("stereo_depth", "door_2", -4.0, False)
+    result2.estimate.observations = [
+        SimpleNamespace(pairs=(pair(0, 2),))
+    ]
+
+    summaries = compare_camera_pairs([result1, result2])
+
+    assert summaries["cam0-cam1"].mean_abs_error_in == pytest.approx(2.0)
+    assert summaries["cam0-cam1"].n_correct == 1
+
+    assert summaries["cam0-cam2"].mean_abs_error_in == pytest.approx(3.0)
+    assert summaries["cam0-cam2"].n_decisions == 2
+    assert summaries["cam0-cam2"].n_correct == 1
+
+
+def test_empty_camera_pair_comparison():
+    """An empty input should return no camera-pair summaries."""
+    from slam_for_ada.eval.ablation import (
+        compare_camera_pairs,
+        group_by_camera_pair,
+    )
+
+    assert group_by_camera_pair([]) == {}
+    assert compare_camera_pairs([]) == {}

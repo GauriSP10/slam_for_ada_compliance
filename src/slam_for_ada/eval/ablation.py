@@ -63,3 +63,37 @@ def best_method(
         summaries,
         key=lambda method: summaries[method].mean_abs_error_in,
     )
+
+def group_by_camera_pair(
+    results: Sequence[ComplianceResult],
+) -> dict[str, list[ComplianceResult]]:
+    """Group feature results by contributing camera pair.
+
+    A result may appear in multiple groups if its fused
+    estimate used observations from multiple camera pairs.
+    These groups are attribution summaries, not independent
+    single-pair accuracy experiments.
+    """
+    groups = defaultdict(list)
+
+    for result in results:
+        pairs = {
+            (pair.left, pair.right)
+            for obs in result.estimate.observations
+            for pair in obs.pairs
+        }
+
+        for left, right in sorted(pairs):
+            groups[f"cam{left}-cam{right}"].append(result)
+
+    return dict(groups)
+
+
+def compare_camera_pairs(
+    results: Sequence[ComplianceResult],
+) -> dict[str, ErrorSummary]:
+    """Summarize errors for each contributing camera pair."""
+    return {
+        pair: summarize_results(pair_results, group=pair)
+        for pair, pair_results in group_by_camera_pair(results).items()
+    }
