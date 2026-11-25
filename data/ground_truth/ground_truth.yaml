@@ -1,5 +1,5 @@
 # Tape-measure ground truth, ISEC 4th floor.  UNITS: INCHES.
-# Source: four handwritten cards, IMG_3488 .. IMG_3491 (the photos are kept local, not in the repo).
+# Source: four handwritten cards, IMG_3488 .. IMG_3491 (photos in data/ground_truth/photos/).
 # Transcribed from the photos; every value has been confirmed by the team.
 #
 # Fields

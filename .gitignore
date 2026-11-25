@@ -15,7 +15,6 @@ outputs/*
 data/models/
 
 # Personal or third-party material kept off the public repo
-data/ground_truth/photos/
 docs/*.pdf
 
 # Build artefacts

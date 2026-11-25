@@ -5,7 +5,7 @@ data/
   raw/bags/            5 ROS1 bags, ~43 GB total. GIT-IGNORED. Never edit.
   calibration/         camera + IMU calibration YAMLs (small, tracked)
   ground_truth/
-    photos/            photos of the handwritten tape measurements (kept local, not in the repo)
+    photos/            photos of the handwritten tape measurements (metadata stripped)
     ground_truth.yaml  typed-up values, inches (23 features, all confirmed)
   cache/               extracted frames, depth maps, etc. GIT-IGNORED, regenerable
 ```
