@@ -3,6 +3,7 @@
 
 import csv
 from pathlib import Path
+from statistics import mean, stdev
 
 OUTPUT = Path("outputs")
 SOURCE = "docs/LEVEL2_VISION_RESULTS.md"
@@ -19,8 +20,31 @@ EXPERIMENTS = [
     ("temporal", "fused", 7, 1.81, "in", "seven features"),
 ]
 
+def calculate_sgbm_error_stats():
+    """Calculate SGBM error variability from real measurement results."""
+    results_path = Path("outputs/level2_results.csv")
+
+    with results_path.open(newline="", encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+
+    absolute_errors = [
+        abs(float(row["error_in"]))
+        for row in rows
+    ]
+
+    if len(absolute_errors) < 2:
+        raise ValueError("At least two estimates are required.")
+
+    return {
+        "n": len(absolute_errors),
+        "mae": mean(absolute_errors),
+        "sd": stdev(absolute_errors),
+    }
+
 def main():
     OUTPUT.mkdir(parents=True, exist_ok=True)
+
+    sgbm_stats = calculate_sgbm_error_stats()
 
     columns = [
         "comparison", "variant", "n", "mean_abs_error_in",
@@ -30,12 +54,18 @@ def main():
     records = []
     for comparison, variant, n, mae, unit, population in EXPERIMENTS:
         assert unit == "in"
+        if comparison == "stereo_matcher" and variant == "SGBM":
+            n = sgbm_stats["n"]
+            mae = sgbm_stats["mae"]
+            error_bar = sgbm_stats["sd"]
+        else:
+            error_bar = ""
         records.append({
             "comparison": comparison,
             "variant": variant,
             "n": n if n is not None else "",
             "mean_abs_error_in": mae,
-            "error_bar_in": "",
+            "error_bar_in": error_bar,
             "population": population,
             "source": SOURCE,
         })
@@ -59,10 +89,16 @@ def main():
     ]
 
     for record in records:
+        error_bar = record["error_bar_in"]
+        error_bar_text = (
+            f"{error_bar:.2f}" if error_bar != "" else "N/A"
+        )
+
         lines.append(
             f"| {record['comparison']} | {record['variant']} | "
             f"{record['n'] or 'N/A'} | "
-            f"{record['mean_abs_error_in']:.2f} | N/A |"
+            f"{record['mean_abs_error_in']:.2f} | "
+            f"{error_bar_text} |"
         )
 
     lines.extend([
@@ -75,6 +111,16 @@ def main():
         "hand-drawn annotations.",
         "- Temporal fusion does not improve the reported "
         "seven-feature mean error.",
+        "",
+        "## Error-bar interpretation",
+        "",
+        "For SGBM, the error bar is the sample standard deviation "
+        "of absolute measurement errors across 12 estimates "
+        "(approximately 1.72 inches).",
+        "It describes variation between estimates, not a "
+        "95% confidence interval or measurement uncertainty.",
+        "N/A means the underlying per-estimate errors are "
+        "unavailable for calculating comparable error bars.",
         "",
         "## Limitations",
         "",
